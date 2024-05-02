@@ -1,47 +1,11 @@
 import { useState } from 'react'
-import './App.css'
+import confetti from 'canvas-confetti'
+import { Square } from './components/Square.jsx' 
+import { TURNS } from './constants.js'
+import { checkWinner, checkEndGame } from './logic/board.js'
 
 /**
- * @brief constantes para los turnos
- */
-const TURNS = {
-  X: 'x',
-  O: 'o'
-}
-
-/**
- * @brief Componente Square
- * @param {*} children parametro usado para rellenar el objeto
- * @param {*} isSelected opción usada para saber el turno de cada jugador
- * @param {*} updateBoard llamada a función para actualizar el tablero
- * @param {*} index posición del cuadrado en el tablero
- * @returns 
- */
-const Square = ({children, isSelected, updateBoard, index}) => {
-  const className = `square ${isSelected ? 'is-selected' : ''}`
-
-  const handleClick = () => {
-    updateBoard(index)
-  }
-
-  return (
-    <div onClick={handleClick} className={className}>
-      {children}
-    </div>
-  )
-}
-
-/**
- * @brief combinaciones ganadoras
- */
-const WINNER_COMBOS = [
-  [0, 1, 2], [3, 4, 5], [6, 7, 8], // horizontal
-  [0, 3, 6], [1, 4, 7], [2, 5, 8], // vertical
-  [0, 4, 8], [2, 4, 6]             // diagonal
-]
-
-/**
- * @brief Función principal del programa la cual despliega todo el HTML
+ * @brief Función principal de la aplicación
  */
 export default function App() {
   {// un estado es un valor que cada vez que cambie, renderiza de nuevo el tablero
@@ -56,30 +20,12 @@ export default function App() {
   const [winner, setWinner] = useState(null)
 
   /**
-    * @brief Revisa todas las combinaciones 
-    * ganadoras para ver si X u O ganó
-    */
-  const checkWinner = (boardToCheck) => {
-    for (const combo of WINNER_COMBOS) {
-      const [index1, index2, index3] = combo
-      if (boardToCheck[index1] &&   // 0 -> x u o
-          boardToCheck[index1] === boardToCheck[index2] &&  // 0 === 1
-          boardToCheck[index1] === boardToCheck[index3]
-        ) {  // 0 === 2
-        return boardToCheck[index1] // x u o
-      }
-    }
-    return null
-  }
-
-  /**
-   * @brief revisa si el tablero está lleno
-   * si no hay ganador y el tablero está lleno, hay un empate
-   * @param {*} newBoard 
-   * @returns 
+   * @brief reinicia el juego
    */
-  const checkEndGame = (newBoard) => {
-    return newBoard.every((square) => square !== null)
+  const resetGame = () => {
+    setBoard(Array(9).fill(null))
+    setTurn(TURNS.X)
+    setWinner(null)
   }
 
   /**
@@ -104,6 +50,7 @@ export default function App() {
     // revisamos si hay ganador
     const newWinner = checkWinner(newBoard)
     if (newWinner) {
+      confetti()
       // actualiza el estado de winner pero de manera asincrona
       // lo que significa que no bloquea la ejecución del código posterior
       setWinner(newWinner)
@@ -116,6 +63,7 @@ export default function App() {
   return (
     <main className='board'>
       <h1>Tic Tac Toe</h1>
+      <button onClick={resetGame}>Reset Game</button>
       <section className="game">
         {
           board.map((square, index) => {
@@ -152,6 +100,10 @@ export default function App() {
               <header className='win'>
                 { winner && <Square>{winner}</Square> }
               </header>
+
+              <footer>
+                <button onClick={resetGame}>Reset Game</button>
+              </footer>
             </div>
           </section>
           )

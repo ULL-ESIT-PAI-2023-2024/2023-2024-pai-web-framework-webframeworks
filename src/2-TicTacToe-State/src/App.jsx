@@ -1,11 +1,22 @@
 import { useState } from 'react'
 import './App.css'
 
+/**
+ * @brief constantes para los turnos
+ */
 const TURNS = {
   X: 'x',
   O: 'o'
 }
 
+/**
+ * @brief Componente Square
+ * @param {*} children parametro usado para rellenar el objeto
+ * @param {*} isSelected opción usada para saber el turno de cada jugador
+ * @param {*} updateBoard llamada a función para actualizar el tablero
+ * @param {*} index posición del cuadrado en el tablero
+ * @returns 
+ */
 const Square = ({children, isSelected, updateBoard, index}) => {
   const className = `square ${isSelected ? 'is-selected' : ''}`
 
@@ -18,9 +29,11 @@ const Square = ({children, isSelected, updateBoard, index}) => {
       {children}
     </div>
   )
-
 }
 
+/**
+ * @brief Función principal del programa la cual despliega todo el HTML
+ */
 export default function App() {
   {// un estado es un valor que cada vez que cambie, renderiza de nuevo el tablero
    // useState crea automaticamente el setBoard para llamarlo y actualizar su valor
